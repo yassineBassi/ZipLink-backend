@@ -1,20 +1,39 @@
-import { Controller, Get, Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { All, Controller, Req, Res } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import type { Request, Response } from 'express';
+import { firstValueFrom } from 'rxjs';
+
+const SERVICES = {
+  api: 'http://localhost:3001',
+  analytics: 'http://localhost:3002',
+};
 
 @Controller()
 export class GatewayController {
-  constructor(
-    @Inject('API_SERVICE') private readonly apiClient: ClientProxy,
-    @Inject('ANALYTICS_SERVICE') private readonly analyticsClient: ClientProxy,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
-  @Get('api/hello')
-  getHello() {
-    return this.apiClient.send({ cmd: 'get_hello' }, {});
+  @All('api/*')
+  async forwardToApi(@Req() req: Request, @Res() res: Response) {
+    return this.forward(req, res, SERVICES.api);
   }
 
-  @Get('analytics')
-  getAnalytics() {
-    return this.analyticsClient.send({ cmd: 'get_analytics' }, {});
+  @All('analytics/*')
+  async forwardToAnalytics(@Req() req: Request, @Res() res: Response) {
+    return this.forward(req, res, SERVICES.analytics);
+  }
+
+  private async forward(req: Request, res: Response, baseUrl: string) {
+    let msPath = "/" + req.path.split('/').slice(2).join('/');
+    const url = `${baseUrl}${msPath}`;
+    const response = await firstValueFrom(
+      this.httpService.request({
+        method: req.method,
+        url,
+        data: req.body,
+        headers: { 'Content-Type': 'application/json' },
+        params: req.query,
+      }),
+    );
+    res.status(response.status).json(response.data);
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AnalyticsService {
-  getAnalytics(data: any) {
-    return { message: 'Analytics data', payload: data };
+  getHello(): string {
+    return 'Hello World from analytics service';
   }
 }
