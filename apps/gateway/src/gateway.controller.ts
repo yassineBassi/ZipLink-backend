@@ -15,7 +15,7 @@ export class GatewayController {
 
   @Get('/health')
   async healthCheck(@Res() res: Response) {
-    this.gatewayService.healthCheck();
+    this.gatewayService.healthCheck(res);
   }
 
   @All('api/*')

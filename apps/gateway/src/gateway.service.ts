@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { Response } from 'express';
 
 @Injectable()
 export class GatewayService {
-  getHello(): string {
-    return 'Hello World!';
-  }
-  healthCheck(): string {
-    return 'OK';
+  
+  healthCheck(res: Response): void {
+    res.status(200).send('OK');
   }
 }
