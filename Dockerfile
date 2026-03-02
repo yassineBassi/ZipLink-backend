@@ -20,4 +20,3 @@ RUN npm install --omit=dev
 COPY --from=builder /app/dist/apps/$APP_NAME ./dist
 
 CMD ["node", "dist/main.js"]
-EXPOSE 3000
