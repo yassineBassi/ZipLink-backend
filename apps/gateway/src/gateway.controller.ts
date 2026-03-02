@@ -1,7 +1,8 @@
-import { All, Controller, Req, Res } from '@nestjs/common';
+import { All, Controller, Get, Req, Res } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import type { Request, Response } from 'express';
 import { firstValueFrom } from 'rxjs';
+import { GatewayService } from './gateway.service';
 
 const SERVICES = {
   api: 'http://localhost:3001',
@@ -10,7 +11,12 @@ const SERVICES = {
 
 @Controller()
 export class GatewayController {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService, private readonly gatewayService: GatewayService) {}
+
+  @Get('/health')
+  async healthCheck(@Res() res: Response) {
+    this.gatewayService.healthCheck();
+  }
 
   @All('api/*')
   async forwardToApi(@Req() req: Request, @Res() res: Response) {

@@ -7,6 +7,7 @@ export class AnalyticsService {
   }
 
   health() {
+    return 'OK';
   }
 
   dashboard() {

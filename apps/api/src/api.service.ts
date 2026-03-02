@@ -10,6 +10,7 @@ export class ApiService {
     }
   
     health() {
+      return 'OK';
     }
   
     metrics() {
