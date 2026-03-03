@@ -3,10 +3,11 @@ import { HttpService } from '@nestjs/axios';
 import type { Request, Response } from 'express';
 import { firstValueFrom } from 'rxjs';
 import { GatewayService } from './gateway.service';
+import { env } from 'process';
 
 const SERVICES = {
-  api: 'http://localhost:3001',
-  analytics: 'http://localhost:3002',
+  api: env.API_URL || 'http://localhost:3004',
+  analytics: env.ANALYTICS_URL || 'http://localhost:3005',
 };
 
 @Controller()
@@ -25,6 +26,7 @@ export class GatewayController {
 
   @All('analytics/*')
   async forwardToAnalytics(@Req() req: Request, @Res() res: Response) {
+    console.log('Forwarding to analytics:', SERVICES.analytics);
     return this.forward(req, res, SERVICES.analytics);
   }
 
