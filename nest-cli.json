@@ -10,6 +10,24 @@
   "monorepo": true,
   "root": "apps/app",
   "projects": {
+    "config": {
+      "type": "library",
+      "root": "libs/config",
+      "entryFile": "index",
+      "sourceRoot": "libs/config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/config/tsconfig.lib.json"
+      }
+    },
+    "database": {
+      "type": "library",
+      "root": "libs/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/database/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
+      }
+    },
     "analytics": {
       "type": "application",
       "root": "apps/analytics",
@@ -26,15 +44,6 @@
       "sourceRoot": "apps/api/src",
       "compilerOptions": {
         "tsConfigPath": "apps/api/tsconfig.app.json"
-      }
-    },
-    "app": {
-      "type": "application",
-      "root": "apps/app",
-      "entryFile": "main",
-      "sourceRoot": "apps/app/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/app/tsconfig.app.json"
       }
     },
     "gateway": {

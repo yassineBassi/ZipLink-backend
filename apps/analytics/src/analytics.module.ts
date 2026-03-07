@@ -2,22 +2,18 @@ import { Module } from '@nestjs/common';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import { Url } from '@app/database';
+import { AppConfigModule, databaseConfig } from '@app/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(`${process.env.DATABASE_PORT}`, 10) || 5432,
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      autoLoadEntities: true,
-      synchronize: true, // Disable in production
-      ssl: {
-        rejectUnauthorized: false,
-      },
+    AppConfigModule,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: databaseConfig,
     }),
+    TypeOrmModule.forFeature([Url]),
   ],
   controllers: [AnalyticsController],
   providers: [AnalyticsService],

@@ -1,0 +1,55 @@
+---
+version: 0.2
+env: 
+  variables: 
+    IMAGE_NAME: gateway
+    
+phases: 
+  install:
+    commands: 
+      - echo "insalling tools"
+      - aws --version
+      - docker --version
+
+  pre_build:
+    commands: 
+      - echo "loggin into AWS ECR"
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+      - echo "ACCOUNT ID is $ACCOUNT_ID"
+      - echo "commit hash is $COMMIT_HASH"
+
+      - |
+        aws ecr get-login-password --region $AWS_DEFAULT_REGION \
+        | docker login --username AWS --password-stdin \
+        $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+  build:
+    commands:
+      - echo "Building Docker image"
+      - docker build --build-env APP_NAME $APP_NAME -t $IMAGE_NAME .
+      
+      - IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME/$IMAGE_NAME
+      - echo "$IMAGE_URI"
+
+      - docker tag $IMAGE_NAME $IMAGE_URI:latest
+      - docker tag $IMAGE_NAME $IMAGE_URI:$COMMIT_HASH
+
+
+  post_build:
+    commands: 
+      - echo "Pushing Docker image to ECR---"
+      - docker push $IMAGE_URI:latest
+
+      - echo "Create task definition revision"
+      - cp image-definition-template.json imagedefinitions.json
+      - sed -i "s|<CONTAINER_NAME>|$IMAGE_NAME|g" imagedefinitions.json
+      - sed -i "s|<IMAGE_URI>|$IMAGE_URI:latest|g" imagedefinitions.json
+      - cat imagedefinitions.json
+      
+      - echo "build completed"
+
+artifacts: 
+  files:
+    - imagedefinitions.json
