@@ -1,4 +1,4 @@
-import { All, Controller, Get, Req, Res } from '@nestjs/common';
+import { All, Controller, Get, HttpStatus, Req, Res } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import type { Request, Response } from 'express';
 import { firstValueFrom } from 'rxjs';
@@ -6,8 +6,8 @@ import { GatewayService } from './gateway.service';
 import { env } from 'process';
 
 const SERVICES = {
-  api: env.API_URL || 'http://localhost:3004',
-  analytics: env.ANALYTICS_URL || 'http://localhost:3005',
+  api: env.API_URL || 'http://localhost:3001',
+  analytics: env.ANALYTICS_URL || 'http://localhost:3002',
 };
 
 @Controller()
@@ -33,15 +33,26 @@ export class GatewayController {
   private async forward(req: Request, res: Response, baseUrl: string) {
     let msPath = "/" + req.path.split('/').slice(2).join('/');
     const url = `${baseUrl}${msPath}`;
-    const response = await firstValueFrom(
-      this.httpService.request({
-        method: req.method,
-        url,
-        data: req.body,
-        headers: { 'Content-Type': 'application/json' },
-        params: req.query,
-      }),
-    );
-    res.status(response.status).json(response.data);
+    console.log("Making request to:", url)
+    try{
+      const response = await firstValueFrom(
+        this.httpService.request({
+          method: req.method,
+          url,
+          data: req.body,
+          headers: { 'Content-Type': 'application/json' },
+          params: req.query,
+        }),
+      );
+      res.status(response.status).json(response.data);
+    }catch(e){
+      if(!e.status){
+        console.log(e.cause)
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.code);
+      }else{
+        console.log(e.response.data)
+        res.status(e.status).json(e.response.data)
+      }
+    }
   }
 }

@@ -8,7 +8,7 @@ export class Url {
   @Column()
   originalUrl: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 8, nullable: false })
   code: string;
 
   @CreateDateColumn()

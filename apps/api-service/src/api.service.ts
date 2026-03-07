@@ -14,7 +14,7 @@ export class ApiService {
       
       const urlObject = {
         originalUrl: url,
-        code: UUID(),
+        code: UUID().slice(0, 8),
         clickCount: 0
       };
       console.log("url object", urlObject);
@@ -22,7 +22,9 @@ export class ApiService {
       await this.urlsRepository.save(urlObject);
       console.log("saved");
       
-      return "done";
+      return {
+        code: urlObject.code
+      };
     }
   
     async getOriginalURL(code: string) {

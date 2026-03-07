@@ -10,11 +10,6 @@ export class ApiController {
     return this.apiService.shortenURL(url);
   }
 
-  @Get('{code}')
-  getOriginalURL(@Param('code') code: string) {
-    return this.apiService.getOriginalURL(code);
-  }
-
   @Get('health')
   health() {
     return this.apiService.health();
@@ -22,7 +17,13 @@ export class ApiController {
 
   @Get('metrics')
   metrics() {
+    console.log('metrics called');
     return this.apiService.metrics();
   }
 
+  @Get(':code')
+  getOriginalURL(@Param('code') code: string) {
+    console.log('code is: ', code);
+    return this.apiService.getOriginalURL(code);
+  }
 }
