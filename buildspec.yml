@@ -32,7 +32,7 @@ phases:
     commands:
       - echo "Building Docker image"
 
-      - IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME/$SERVICE_NAME
+      - IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME
       - echo "$IMAGE_URI"
 
       - docker build --build-arg APP_NAME=$SERVICE_NAME -t $IMAGE_URI .
