@@ -1,5 +1,5 @@
 import { Url } from '@app/database';
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as UUID } from 'uuid';
@@ -9,58 +9,56 @@ import type { Cache } from 'cache-manager';
 @Injectable()
 export class ApiService {
 
+  private readonly logger = new Logger(ApiService.name);
+
   constructor(
     @InjectRepository(Url) private urlsRepository: Repository<Url>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
-  
+
   async shortenURL(url: string) {
-    console.log("shorten url api");
-    
+    this.logger.log(`Shortening URL: ${url}`);
+
     const urlObject = {
       originalUrl: url,
       code: UUID().slice(0, 8),
       clickCount: 0
     };
-    console.log("url object", urlObject);
-    
+
     await this.urlsRepository.save(urlObject);
-    console.log("saved");
-    
+    this.logger.log(`URL saved with code: ${urlObject.code}`);
+
     return {
       code: urlObject.code
     };
   }
 
-  async incrementClickCount(code){
+  async incrementClickCount(code: string) {
     const urlObject = await this.urlsRepository.findOne({where: {code}});
     if(urlObject){
       urlObject.clickCount += 1;
       await this.urlsRepository.save(urlObject);
-      console.log("url object click count", urlObject.clickCount)
+      this.logger.debug(`Click count incremented for code: ${code} -> ${urlObject.clickCount}`);
     }
     return urlObject;
   }
 
   async getOriginalURL(code: string) {
-    console.log("get original url");
-    console.log("code is ", code);
+    this.logger.log(`Resolving URL for code: ${code}`);
 
     const cached = await this.cacheManager.get<string>(code);
     if (cached) {
-      console.log("cache hit for", code);
-      console.log('cached value : ', cached);
+      this.logger.debug(`Cache hit for code: ${code}`);
       this.incrementClickCount(code);
       return cached;
     }
-    
-    console.log('cache miss for ', code)
+
+    this.logger.debug(`Cache miss for code: ${code}`);
 
     const urlObject = await this.incrementClickCount(code);
 
-    console.log("url object is ", urlObject);
-
     if(!urlObject){
+      this.logger.warn(`URL not found for code: ${code}`);
       throw new HttpException('URL not found', 404);
     }
 
