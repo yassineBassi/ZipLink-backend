@@ -23,7 +23,9 @@
     "test:e2e": "jest --config ./apps/app/test/jest-e2e.json"
   },
   "dependencies": {
+    "@keyv/redis": "^5.1.6",
     "@nestjs/axios": "^4.0.1",
+    "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.0.1",
@@ -31,6 +33,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.13.5",
+    "cache-manager": "^7.2.8",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

@@ -5,12 +5,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Url } from '@app/database';
 import { AppConfigModule, databaseConfig } from '@app/config';
+import { CacheModule } from '@nestjs/cache-manager';
+import KeyvRedis from '@keyv/redis';
 
 @Module({
   controllers: [ApiController],
   providers: [ApiService],
   imports: [
     AppConfigModule,
+    CacheModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        stores: [
+          new KeyvRedis(
+            `redis://${configService.get('REDIS_HOST')}:${configService.get('REDIS_PORT')}`,
+          ),
+        ],
+        ttl: configService.get<number>('CACHE_TTL', 3600) * 1000,
+      }),
+    }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: databaseConfig,
