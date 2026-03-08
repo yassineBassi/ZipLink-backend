@@ -46,12 +46,7 @@ export class ApiService {
     console.log("get original url");
     console.log("code is ", code);
 
-    try{
-      const cached = await this.cacheManager.get<string>(code);
-    }catch(e){
-      console.log(e)
-    }
-    let cached = null;
+    const cached = await this.cacheManager.get<string>(code);
     if (cached) {
       console.log("cache hit for", code);
       console.log('cached value : ', cached);
