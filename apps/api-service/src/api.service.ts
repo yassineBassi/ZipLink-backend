@@ -40,6 +40,7 @@ export class ApiService {
       await this.urlsRepository.save(urlObject);
       this.logger.debug(`Click count incremented for code: ${code} -> ${urlObject.clickCount}`);
     }
+    
     return urlObject;
   }
 
