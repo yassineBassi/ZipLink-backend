@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UrlClick } from './url_click.entity';
 
 @Entity('urls')
 export class Url {
@@ -14,6 +15,9 @@ export class Url {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ default: 0 })
-  clickCount: number;
+  @OneToMany(() => UrlClick, urlClick => urlClick.url, {
+    cascade: true,
+    onDelete: 'CASCADE'
+  })
+  clicks: UrlClick[];
 }

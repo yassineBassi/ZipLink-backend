@@ -7,6 +7,7 @@ import { Url } from '@app/database';
 import { AppConfigModule, databaseConfig } from '@app/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import KeyvRedis from '@keyv/redis';
+import { UrlClick } from '@app/database/entities/url_click.entity';
 
 @Module({
   controllers: [ApiController],
@@ -28,7 +29,7 @@ import KeyvRedis from '@keyv/redis';
       inject: [ConfigService],
       useFactory: databaseConfig,
     }),
-    TypeOrmModule.forFeature([Url]),
+    TypeOrmModule.forFeature([Url, UrlClick]),
   ],
 })
 export class ApiModule {}

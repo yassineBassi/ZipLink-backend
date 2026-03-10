@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Url } from '@app/database';
 import { AppConfigModule, databaseConfig } from '@app/config';
+import { UrlClick } from '@app/database/entities/url_click.entity';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { AppConfigModule, databaseConfig } from '@app/config';
       inject: [ConfigService],
       useFactory: databaseConfig,
     }),
-    TypeOrmModule.forFeature([Url]),
+    TypeOrmModule.forFeature([Url, UrlClick]),
   ],
   controllers: [AnalyticsController],
   providers: [AnalyticsService],
