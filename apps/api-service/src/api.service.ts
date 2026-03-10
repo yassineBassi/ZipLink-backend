@@ -46,12 +46,21 @@ export class ApiService {
     const url = this.configService.get('CLICKS_QUEUE_URL');
 
     this.logger.log('SQS Url : ', url)
+    this.logger.log("Request Headers", request.headers)
+
+    const clientIp = request.headers['x-forwarded-for'];
+    const clientBrowser = request.headers['user-agent'];
 
     const urlObject = await this.urlsRepository.findOne({where: {code}});
     if(urlObject){
       const command = new SendMessageCommand({
         QueueUrl: url,
-        MessageBody: JSON.stringify({code, timestamp: new Date()})
+        MessageBody: JSON.stringify({
+          code,
+          clientIp,
+          clientBrowser,
+          timestamp: new Date()
+        })
       });
       const response = await this.sqsClient.send(command);
       console.log(response)

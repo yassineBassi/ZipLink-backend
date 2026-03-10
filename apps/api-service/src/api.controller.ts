@@ -20,9 +20,4 @@ export class ApiController {
   metrics() {
     return this.apiService.metrics();
   }
-
-  @Get(':code')
-  getOriginalURL(@Param('code') code: string, @Req() request: Request) {
-    return this.apiService.getOriginalURL(code, request);
-  }
 }

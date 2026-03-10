@@ -41,13 +41,20 @@ export class GatewayController {
     this.logger.log(`Gateway request - ${req.method} ${url}`);    
     this.logger.log("Request Headers", req.headers)
     
+    const gatewayIp = req.socket.localAddress;
+    this.logger.log("Gateway IP", gatewayIp)
+
     try {
       const response = await firstValueFrom(
         this.httpService.request({
           method: req.method,
           url,
           data: req.body,
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            ...req.headers,
+            'x-forwarded-for': req.headers['x-forwarded-for'] + ', ' + gatewayIp,
+            'Content-Type': 'application/json'
+          },
           params: req.query,
         }),
       );
