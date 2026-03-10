@@ -42,7 +42,7 @@ export class GatewayController {
     this.logger.log("Request Headers", req.headers)
     
     const gatewayIp = req.socket.localAddress;
-    this.logger.log("Gateway IP", gatewayIp)
+    this.logger.log("Gateway IP : " + gatewayIp)
 
     try {
       const response = await firstValueFrom(
@@ -51,7 +51,6 @@ export class GatewayController {
           url,
           data: req.body,
           headers: {
-            ...req.headers,
             'x-forwarded-for': req.headers['x-forwarded-for'] + ', ' + gatewayIp,
             'Content-Type': 'application/json'
           },
@@ -59,6 +58,7 @@ export class GatewayController {
         }),
       );
       res.status(response.status).json(response.data);
+      this.logger.log("------------------------------------------")
     } catch (e) {
       if (!e.status) {
         this.logger.error(`Upstream connection error: ${e.code}`, e.cause);
@@ -67,6 +67,8 @@ export class GatewayController {
         this.logger.warn(`Upstream responded with ${e.status}`, e.response?.data);
         res.status(e.status).json(e.response.data);
       }
+      this.logger.log("Error")
+      this.logger.log("------------------------------------------")
     }
   }
 }
