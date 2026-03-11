@@ -13,6 +13,9 @@ export class UrlClick {
     @Column({ type: 'varchar' })
     clientIp: string;
 
+    @Column({ type: 'varchar' })
+    clientBrowser: string;
+
     @Column({ type: 'timestamp' })
-    createdAt: Date;
+    time: Date;
 }

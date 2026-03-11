@@ -45,9 +45,6 @@ export class ApiService {
   async incrementClickCount(code: string, request: Request) {
     const url = this.configService.get('CLICKS_QUEUE_URL');
 
-    this.logger.log('SQS Url : ', url)
-    this.logger.log("Request Headers", request.headers)
-
     const clientIp = request.headers['x-forwarded-for'];
     const clientBrowser = request.headers['user-agent'];
 
@@ -56,7 +53,7 @@ export class ApiService {
       const command = new SendMessageCommand({
         QueueUrl: url,
         MessageBody: JSON.stringify({
-          code,
+          urlId: urlObject.id,
           clientIp,
           clientBrowser,
           timestamp: new Date()
