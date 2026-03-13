@@ -52,6 +52,7 @@ export class GatewayController {
           data: req.body,
           headers: {
             'x-forwarded-for': req.headers['x-forwarded-for'] + ', ' + gatewayIp,
+            'user-agent': req.headers['user-agent'],
             'Content-Type': 'application/json'
           },
           params: req.query,
