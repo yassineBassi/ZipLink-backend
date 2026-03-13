@@ -7,7 +7,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 @Injectable()
 export class ApiService {
@@ -66,7 +66,7 @@ export class ApiService {
     return urlObject;
   }
 
-  async getOriginalURL(code: string, request: Request, response: Response) {
+  async getOriginalURL(code: string, request: Request) {
     this.logger.log(`Resolving URL for code: ${code}`);
     this.logger.log("Request Headers", request.headers)
 
@@ -88,7 +88,7 @@ export class ApiService {
 
     this.cacheManager.set(code, urlObject.originalUrl);
 
-    return response.status(301).redirect(urlObject.originalUrl);
+    return urlObject.originalUrl;
   }
 
   health() {
