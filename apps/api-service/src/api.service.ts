@@ -8,6 +8,7 @@ import type { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Request } from 'express';
+import { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class ApiService {
@@ -46,7 +47,9 @@ export class ApiService {
     const url = this.configService.get('CLICKS_QUEUE_URL');
 
     const clientIp = request.headers['x-forwarded-for'];
-    const clientBrowser = request.headers['user-agent'];
+    
+    const userAgent = request.headers['user-agent'];
+    const clientBrowser = new UAParser(userAgent).getBrowser().name;
 
     const urlObject = await this.urlsRepository.findOne({where: {code}});
     if(urlObject){
