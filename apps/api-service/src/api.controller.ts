@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { ApiService } from './api.service';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 
 @Controller()
 export class ApiController {
@@ -12,8 +12,8 @@ export class ApiController {
   }
 
   @Get(':code')
-  getOriginalURL(@Param('code') code: string, @Req() request: Request) {
-    return this.apiService.getOriginalURL(code, request);
+  getOriginalURL(@Param('code') code: string, @Req() request: Request, @Res() response: Response) {
+    return this.apiService.getOriginalURL(code, request, response);
   }
   
 
