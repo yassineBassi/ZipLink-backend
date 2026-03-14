@@ -49,6 +49,8 @@ export class AnalyticsService {
       topUrls,
       trend,
       browserBreakdown,
+      deviceTypeBreakdown,
+      osBreakdown,
       peakHoursRaw,
     ] = await Promise.all([
       this.urlClickRepository.count(),
@@ -99,6 +101,22 @@ export class AnalyticsService {
 
       this.urlClickRepository
         .createQueryBuilder('click')
+        .select('click.clientDeviceType', 'deviceType')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('click.clientDeviceType')
+        .orderBy('count', 'DESC')
+        .getRawMany(),
+
+      this.urlClickRepository
+        .createQueryBuilder('click')
+        .select('click.clientOS', 'os')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('click.clientOS')
+        .orderBy('count', 'DESC')
+        .getRawMany(),
+
+      this.urlClickRepository
+        .createQueryBuilder('click')
         .select('EXTRACT(HOUR FROM click.time)', 'hour')
         .addSelect('COUNT(*)', 'count')
         .groupBy('hour')
@@ -137,6 +155,14 @@ export class AnalyticsService {
       })),
       browsers: browserBreakdown.map(row => ({
         browser: row.browser || 'Unknown',
+        count: parseInt(row.count),
+      })),
+      deviceTypes: deviceTypeBreakdown.map(row => ({
+        deviceType: row.deviceType || 'Unknown',
+        count: parseInt(row.count),
+      })),
+      operatingSystems: osBreakdown.map(row => ({
+        os: row.os || 'Unknown',
         count: parseInt(row.count),
       })),
       peakHours: peakHoursRaw.map(row => ({
