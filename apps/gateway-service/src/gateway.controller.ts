@@ -35,6 +35,11 @@ export class GatewayController {
   private async forward(req: Request, res: Response, baseUrl: string) {
     this.logger.log("------------------------------------------")
 
+    if (req.method === 'OPTIONS') {
+      res.status(HttpStatus.NO_CONTENT).send();
+      return;
+    }
+
     const msPath = '/' + req.path.split('/').slice(2).join('/');
     const url = `${baseUrl}${msPath}`;
 
