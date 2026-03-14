@@ -16,6 +16,12 @@ export class UrlClick {
     @Column({ type: 'varchar' })
     clientBrowser: string;
 
+    @Column({ type: 'varchar' })
+    clientDeviceType: string;
+
+    @Column({ type: 'varchar' })
+    clientOS: string;
+
     @Column({ type: 'timestamp' })
     time: Date;
 }

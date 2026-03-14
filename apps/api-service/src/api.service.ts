@@ -50,6 +50,8 @@ export class ApiService {
     
     const userAgent = request.headers['user-agent'];
     const clientBrowser = new UAParser(userAgent).getBrowser().name;
+    const clientDeviceType = new UAParser(userAgent).getDevice().type || 'desktop';
+    const clientOS = new UAParser(userAgent).getOS().name;
 
     const urlObject = await this.urlsRepository.findOne({where: {code}});
     if(urlObject){
@@ -59,6 +61,8 @@ export class ApiService {
           urlId: urlObject.id,
           clientIp,
           clientBrowser,
+          clientDeviceType,
+          clientOS,
           timestamp: new Date()
         })
       });
