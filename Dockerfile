@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/node:18 AS builder
+FROM public.ecr.aws/docker/library/node:22.16.0 AS builder
 
 ARG APP_NAME
 WORKDIR /app
@@ -9,7 +9,7 @@ RUN npm install
 COPY . .
 RUN npm run build $APP_NAME
 
-FROM public.ecr.aws/docker/library/node:18
+FROM public.ecr.aws/docker/library/node:22.16.0
 
 ARG APP_NAME
 WORKDIR /app
