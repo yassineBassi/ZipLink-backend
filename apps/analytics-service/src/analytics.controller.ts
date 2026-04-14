@@ -1,6 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 import { CodeParamDto } from './dto/code-param.dto';
+import type { Response } from 'express';
+import { register } from 'prom-client';
 
 @Controller()
 export class AnalyticsController {
@@ -14,6 +16,12 @@ export class AnalyticsController {
   @Get('dashboard')
   dashboard() {
     return this.analyticsService.dashboard();
+  }
+
+  @Get('metrics')
+  async getMetrics(@Res() response: Response) {
+    response.set('Content-Type', register.contentType);
+    response.end(await register.metrics());
   }
 
   @Get(':code')
