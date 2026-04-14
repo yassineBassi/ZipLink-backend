@@ -18,7 +18,7 @@ export class ApiController {
     return this.apiService.shortenURL(body.url);
   }
 
-  @Get(':code([a-zA-Z0-9]{8})')
+  @Get(':code')
   getOriginalURL(@Param() params: CodeParamDto, @Req() request: Request) {
     return this.apiService.getOriginalURL(params.code, request);
   }
