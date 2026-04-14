@@ -1,5 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
+import { CodeParamDto } from './dto/code-param.dto';
 
 @Controller()
 export class AnalyticsController {
@@ -16,7 +17,7 @@ export class AnalyticsController {
   }
 
   @Get(':code')
-  getClickAnalytics(@Param('code') code: string) {
-    return this.analyticsService.getClickAnalytics(code);
+  getClickAnalytics(@Param() params: CodeParamDto) {
+    return this.analyticsService.getClickAnalytics(params.code);
   }
 }

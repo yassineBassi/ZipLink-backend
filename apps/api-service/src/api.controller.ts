@@ -1,19 +1,21 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ApiService } from './api.service';
 import type { Request } from 'express';
+import { ShortenUrlDto } from './dto/shorten-url.dto';
+import { CodeParamDto } from './dto/code-param.dto';
 
 @Controller()
 export class ApiController {
   constructor(private readonly apiService: ApiService) {}
 
   @Post('shorten')
-  shortenURL(@Body('url') url: string) {
-    return this.apiService.shortenURL(url);
+  shortenURL(@Body() body: ShortenUrlDto) {
+    return this.apiService.shortenURL(body.url);
   }
 
   @Get(':code')
-  getOriginalURL(@Param('code') code: string, @Req() request: Request) {
-    return this.apiService.getOriginalURL(code, request);
+  getOriginalURL(@Param() params: CodeParamDto, @Req() request: Request) {
+    return this.apiService.getOriginalURL(params.code, request);
   }
   
 

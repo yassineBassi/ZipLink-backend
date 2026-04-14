@@ -49,6 +49,11 @@ export class GatewayController {
     const gatewayIp = req.socket.localAddress;
     this.logger.log("Gateway IP : " + gatewayIp)
 
+    const existingForwardedFor = req.headers['x-forwarded-for'];
+    const xForwardedFor = existingForwardedFor
+      ? `${existingForwardedFor}, ${gatewayIp}`
+      : gatewayIp;
+
     try {
       const response = await firstValueFrom(
         this.httpService.request({
@@ -56,7 +61,7 @@ export class GatewayController {
           url,
           data: req.body,
           headers: {
-            'x-forwarded-for': req.headers['x-forwarded-for'] + ', ' + gatewayIp,
+            'x-forwarded-for': xForwardedFor,
             'user-agent': req.headers['user-agent'],
             'Content-Type': 'application/json'
           },
