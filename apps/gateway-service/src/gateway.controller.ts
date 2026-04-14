@@ -79,7 +79,9 @@ export class GatewayController {
       );
       stopTimer();
       this.requestsCounter.inc({ method: req.method, service, status_code: String(response.status) });
-      res.status(response.status).json(response.data);
+      const contentType = response.headers['content-type'];
+      if (contentType) res.set('Content-Type', contentType);
+      res.status(response.status).send(response.data);
       this.logger.log("------------------------------------------")
     } catch (e) {
       stopTimer();
