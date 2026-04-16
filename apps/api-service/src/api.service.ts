@@ -74,7 +74,6 @@ export class ApiService {
         })
       });
       const response = await this.sqsClient.send(command);
-      console.log(response)
     }
 
     return urlObject;
@@ -82,7 +81,6 @@ export class ApiService {
 
   async getOriginalURL(code: string, request: Request) {
     this.logger.log(`Resolving URL for code: ${code}`);
-    this.logger.log("Request Headers", request.headers)
 
     this.urlResolvesCounter.inc();
 
@@ -107,7 +105,9 @@ export class ApiService {
 
     this.cacheManager.set(code, urlObject.originalUrl);
 
-    return urlObject.originalUrl;
+    const url = urlObject.originalUrl;
+    this.logger.log(`Original URL for code ${code} is ${url}`);
+    return url;
   }
 
   health() {

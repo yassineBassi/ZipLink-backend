@@ -51,7 +51,6 @@ export class GatewayController {
     const url = `${baseUrl}${msPath}`;
 
     this.logger.log(`Gateway request - ${req.method} ${url}`);
-    this.logger.log("Request Headers", req.headers)
 
     const gatewayIp = req.socket.localAddress;
     this.logger.log("Gateway IP : " + gatewayIp)
@@ -82,6 +81,7 @@ export class GatewayController {
       const contentType = response.headers['content-type'];
       if (contentType) res.set('Content-Type', contentType);
       res.status(response.status).send(response.data);
+      this.logger.log("Response Data: " + response.data)
       this.logger.log("------------------------------------------")
     } catch (e) {
       stopTimer();
