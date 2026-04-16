@@ -5,7 +5,7 @@ async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
   app.getHttpAdapter().getInstance().set('etag', false);
   app.enableCors({
-    origin: process.env.ORIGIN_URLS ? process.env.ORIGIN_URLS.split(',') : '',
+    origin: process.env.ORIGIN_URLS ? process.env.ORIGIN_URLS.split(',').map(o => o.trim().replace(/\/$/, '')) : '',
     methods: 'GET,HEAD,PUT,POST,OPTIONS',
     allowedHeaders: '*',
    });
