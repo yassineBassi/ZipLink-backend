@@ -13,6 +13,8 @@ phases:
       - docker --version
       - echo "$SERVICE_NAME"
       - echo "$REPO_NAME"
+      - docker pull ghcr.io/aquasecurity/trivy:latest
+      - docker run --rm -v $(pwd):/workspace ghcr.io/aquasecurity/trivy:latest fs /workspace --exit-code 1 --severity HIGH,CRITICAL
 
   pre_build:
     commands: 
@@ -42,6 +44,7 @@ phases:
 
   post_build:
     commands: 
+      - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/aquasecurity/trivy:latest image $IMAGE_URI:latest
       - echo "Pushing Docker image to ECR---"
       - docker push $IMAGE_URI:latest
 
